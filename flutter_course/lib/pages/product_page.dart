@@ -1,11 +1,39 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter_course/widgets/ui_elements/title_default.dart';
+
 class ProductPage extends StatelessWidget {
   final String title;
   final String imageurl;
+  final double price;
 
-  ProductPage(this.title, this.imageurl);
+  ProductPage(this.title, this.imageurl, this.price);
+
+  Widget _buildAddressPriceRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          "Union Square,San Francisco",
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          child: Text(
+            "|",
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        Text(
+          price.toString(),
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+        )
+      ],
+    );
+  }
 
   _showWarning(BuildContext context) {
     showDialog(
@@ -49,8 +77,9 @@ class ProductPage extends StatelessWidget {
             Image.asset(imageurl),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(title),
+              child: TitleDefault(title),
             ),
+            _buildAddressPriceRow(),
             Container(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
