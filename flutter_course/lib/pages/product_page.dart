@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/models/product.dart';
+import 'package:flutter_course/scoped_model/products.dart';
 import 'dart:async';
 
 import 'package:flutter_course/widgets/ui_elements/title_default.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageurl;
-  final String description;
-  final double price;
+  final int index;
 
-  ProductPage(this.title, this.imageurl, this.price, this.description);
+  ProductPage(this.index);
 
-  Widget _buildAddressPriceRow() {
+  Widget _buildAddressPriceRow(double price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -29,7 +29,7 @@ class ProductPage extends StatelessWidget {
           ),
         ),
         Text(
-          price.toString(),
+          '\$'+price.toString(),
           style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
         )
       ],
@@ -69,28 +69,29 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: Column(
-          children: <Widget>[
-            Image.asset(imageurl),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: TitleDefault(title),
+      child: ScopedModelDescendant<ProductModel>(
+        builder: (BuildContext context, Widget child, ProductModel model) {
+          Product product = model.products[index];
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(product.title),
             ),
-            _buildAddressPriceRow(),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: RaisedButton(
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  child: Text("Delete"),
-                  onPressed: () => _showWarning(context)),
+            body: Column(
+              children: <Widget>[
+                Image.asset(product.image),
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: TitleDefault(product.title),
+                ),
+                _buildAddressPriceRow(product.price),
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(product.description),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
