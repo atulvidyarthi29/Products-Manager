@@ -5,6 +5,8 @@ import 'package:flutter_course/pages/home.dart';
 import 'package:flutter_course/pages/product_admin.dart';
 import 'package:flutter_course/pages/product_page.dart';
 
+import 'models/product.dart';
+
 void main() {
   // debugPaintSizeEnabled = true;
   // debugPaintBaselinesEnabled = true;
@@ -20,9 +22,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [];
+  List<Product> _products = [];
 
-  void _addProduct(Map<String, dynamic> prod) {
+  void _addProduct(Product prod) {
     setState(() {
       _products.add(prod);
     });
@@ -31,6 +33,12 @@ class _MyAppState extends State<MyApp> {
   void _deleteProduct(int index) {
     setState(() {
       _products.removeAt(index);
+    });
+  }
+
+  void _updateProduct(int index, Product product) {
+    setState(() {
+      _products[index] = product;
     });
   }
 
@@ -44,8 +52,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (BuildContext context) => AuthPage(),
         '/products': (BuildContext context) => HomePage(_products),
-        '/admin': (BuildContext context) =>
-            ProductAdminPage(_addProduct, _deleteProduct),
+        '/admin': (BuildContext context) => ProductAdminPage(
+            _addProduct, _deleteProduct, _updateProduct, _products),
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> path = settings.name.split('/');
@@ -56,9 +64,10 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(path[2]);
           return MaterialPageRoute<bool>(
               builder: (BuildContext context) => ProductPage(
-                  _products[index]['title'],
-                  _products[index]['image'],
-                  _products[index]['price']));
+                  _products[index].title,
+                  _products[index].image,
+                  _products[index].price,
+                  _products[index].description));
         }
         return null;
       },

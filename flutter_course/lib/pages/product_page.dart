@@ -6,9 +6,10 @@ import 'package:flutter_course/widgets/ui_elements/title_default.dart';
 class ProductPage extends StatelessWidget {
   final String title;
   final String imageurl;
+  final String description;
   final double price;
 
-  ProductPage(this.title, this.imageurl, this.price);
+  ProductPage(this.title, this.imageurl, this.price, this.description);
 
   Widget _buildAddressPriceRow() {
     return Row(
