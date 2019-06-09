@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/scoped_model/main.dart';
 import 'package:flutter_course/widgets/products/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatelessWidget {
-  
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
@@ -30,9 +31,16 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('All Products'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {},
+          ScopedModelDescendant<MainModel>(
+            builder: (BuildContext context, Widget child, MainModel model) {
+              return IconButton(
+                icon: Icon(Icons.favorite),
+                color: model.displayFavMode ? Colors.red : Colors.white,
+                onPressed: () {
+                  model.toggleDiplayMode();
+                },
+              );
+            },
           )
         ],
       ),

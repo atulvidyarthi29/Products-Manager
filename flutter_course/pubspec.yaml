@@ -73,3 +73,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+  # https://www.dartlang.org/guides/language/analysis-options
+analyzer:
+  strong-mode: true
+  language:
+    enableSuperMixins: true

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
-import 'package:flutter_course/scoped_model/products.dart';
+import 'package:flutter_course/scoped_model/main.dart';
 import 'dart:async';
 
 import 'package:flutter_course/widgets/ui_elements/title_default.dart';
@@ -29,7 +29,7 @@ class ProductPage extends StatelessWidget {
           ),
         ),
         Text(
-          '\$'+price.toString(),
+          '\$' + price.toString(),
           style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
         )
       ],
@@ -69,9 +69,9 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: ScopedModelDescendant<ProductModel>(
-        builder: (BuildContext context, Widget child, ProductModel model) {
-          Product product = model.products[index];
+      child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+          Product product = model.allProducts[index];
           return Scaffold(
             appBar: AppBar(
               title: Text(product.title),

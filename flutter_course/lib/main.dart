@@ -4,7 +4,7 @@ import 'package:flutter_course/pages/auth.dart';
 import 'package:flutter_course/pages/home.dart';
 import 'package:flutter_course/pages/product_admin.dart';
 import 'package:flutter_course/pages/product_page.dart';
-import 'package:flutter_course/scoped_model/products.dart';
+import 'package:flutter_course/scoped_model/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 void main() {
@@ -23,8 +23,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
-    return ScopedModel<ProductModel>(
-      model: ProductModel(),
+    return ScopedModel<MainModel>(
+      model: MainModel(),
       child: MaterialApp(
         theme: ThemeData(
             brightness: Brightness.light,

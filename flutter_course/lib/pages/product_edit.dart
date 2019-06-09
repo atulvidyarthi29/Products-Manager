@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
-import 'package:flutter_course/scoped_model/products.dart';
+import 'package:flutter_course/scoped_model/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductEditPage extends StatefulWidget {
@@ -19,28 +19,30 @@ class _ProductEditPageState extends State<ProductEditPage> {
   };
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-  void _submitform(Function addProduct, Function updateProduct,
+  void _submitform(
+      Function addProduct, Function updateProduct, Function selectProduct,
       [int selectedProductIndex]) {
     if (!_formkey.currentState.validate()) return;
     _formkey.currentState.save();
 
     if (selectedProductIndex == null)
-      addProduct(Product(
-        title: _formdata['title'],
-        description: _formdata['description'],
-        price: _formdata['price'],
-        image: _formdata['image'],
-      ));
+      addProduct(
+        _formdata['title'],
+        _formdata['description'],
+        _formdata['price'],
+        _formdata['image'],
+      );
     else {
-      updateProduct(Product(
-        title: _formdata['title'],
-        description: _formdata['description'],
-        price: _formdata['price'],
-        image: _formdata['image'],
-      ));
+      updateProduct(
+        _formdata['title'],
+        _formdata['description'],
+        _formdata['price'],
+        _formdata['image'],
+      );
     }
 
-    Navigator.pushReplacementNamed(context, '/products');
+    Navigator.pushReplacementNamed(context, '/products')
+        .then((_) => selectProduct(null));
   }
 
   Widget _buildTitleTextField(Product product) {
@@ -93,11 +95,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   Widget _buildSubmitButton() {
     return ScopedModelDescendant(
-      builder: (BuildContext context, Widget child, ProductModel model) {
+      builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
           textColor: Colors.white,
           child: Text("Save"),
-          onPressed: () => _submitform(model.addProduct, model.updateProduct,
+          onPressed: () => _submitform(model.addProduct, model.updateProduct,model.selectProduct,
               model.selectedProductIndex),
         );
       },
@@ -136,7 +138,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
-      builder: (BuildContext context, Widget child, ProductModel model) {
+      builder: (BuildContext context, Widget child, MainModel model) {
         Widget productContent =
             _buildProductContent(context, model.selectedProduct);
         return model.selectedProductIndex == null
