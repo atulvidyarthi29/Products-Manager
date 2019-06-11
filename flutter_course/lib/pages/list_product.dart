@@ -3,7 +3,24 @@ import 'package:flutter_course/pages/product_edit.dart';
 import 'package:flutter_course/scoped_model/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class ListProduct extends StatelessWidget {
+class ListProduct extends StatefulWidget {
+  final MainModel model;
+
+  ListProduct(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ListProductState();
+  }
+}
+
+class _ListProductState extends State<ListProduct> {
+  @override
+  void initState() {
+    widget.model.fetchProduct();
+    super.initState();
+  }
+
   Widget _buildEditButton(BuildContext context, int index, MainModel model) {
     return IconButton(
       icon: Icon(Icons.edit),
@@ -41,7 +58,8 @@ class ListProduct extends StatelessWidget {
                   ListTile(
                     contentPadding: EdgeInsets.all(10.0),
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage(model.allProducts[index].image),
+                      backgroundImage:
+                          NetworkImage(model.allProducts[index].image),
                     ),
                     title: Text(model.allProducts[index].title),
                     subtitle:

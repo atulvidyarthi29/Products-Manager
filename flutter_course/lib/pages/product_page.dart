@@ -36,31 +36,31 @@ class ProductPage extends StatelessWidget {
     );
   }
 
-  _showWarning(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Are you sure?"),
-            content: Text("This cannot be undone."),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                child: Text("Delete"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context, true);
-                },
-              ),
-            ],
-          );
-        });
-  }
+  // _showWarning(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: Text("Are you sure?"),
+  //           content: Text("This cannot be undone."),
+  //           actions: <Widget>[
+  //             FlatButton(
+  //               child: Text("Cancel"),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             ),
+  //             FlatButton(
+  //               child: Text("Delete"),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.pop(context, true);
+  //               },
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class ProductPage extends StatelessWidget {
             ),
             body: Column(
               children: <Widget>[
-                Image.asset(product.image),
+                Image.network(product.image),
                 Container(
                   padding: EdgeInsets.all(10.0),
                   child: TitleDefault(product.title),

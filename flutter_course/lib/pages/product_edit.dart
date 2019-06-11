@@ -12,7 +12,7 @@ class ProductEditPage extends StatefulWidget {
 
 class _ProductEditPageState extends State<ProductEditPage> {
   final Map<String, dynamic> _formdata = {
-    'title': 'Atul',
+    'title': null,
     'description': null,
     'price': null,
     'image': 'assets/food.jpg',
@@ -31,18 +31,21 @@ class _ProductEditPageState extends State<ProductEditPage> {
         _formdata['description'],
         _formdata['price'],
         _formdata['image'],
-      );
+      ).then((_) {
+        Navigator.pushReplacementNamed(context, '/products')
+            .then((_) => selectProduct(null));
+      });
     else {
       updateProduct(
         _formdata['title'],
         _formdata['description'],
         _formdata['price'],
         _formdata['image'],
-      );
+      ).then((_) {
+        Navigator.pushReplacementNamed(context, '/products')
+            .then((_) => selectProduct(null));
+      });
     }
-
-    Navigator.pushReplacementNamed(context, '/products')
-        .then((_) => selectProduct(null));
   }
 
   Widget _buildTitleTextField(Product product) {
@@ -96,12 +99,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
   Widget _buildSubmitButton() {
     return ScopedModelDescendant(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          textColor: Colors.white,
-          child: Text("Save"),
-          onPressed: () => _submitform(model.addProduct, model.updateProduct,model.selectProduct,
-              model.selectedProductIndex),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                textColor: Colors.white,
+                child: Text("Save"),
+                onPressed: () => _submitform(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex),
+              );
       },
     );
   }

@@ -3,7 +3,40 @@ import 'package:flutter_course/scoped_model/main.dart';
 import 'package:flutter_course/widgets/products/products.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  final MainModel model;
+
+  HomePage(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _HomePageState();
+  }
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    widget.model.fetchProduct();
+    super.initState();
+  }
+
+  Widget _buildProductBody() {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        Widget content = Center(
+          child: Text('No Products found'),
+        );
+        if (model.displayedProducts.length > 0 && !model.isLoading) {
+          content = Products();
+        } else if (model.isLoading) {
+          content = Center(child: CircularProgressIndicator());
+        }
+        return content;
+      },
+    );
+  }
+
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
@@ -44,7 +77,7 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Products(),
+      body: _buildProductBody(),
     );
   }
 }
