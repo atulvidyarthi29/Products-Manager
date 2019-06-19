@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/models/product.dart';
-import 'package:flutter_course/scoped_model/main.dart';
 import 'dart:async';
 
 import 'package:flutter_course/widgets/ui_elements/title_default.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
-  final int index;
+  final Product product;
 
-  ProductPage(this.index);
+  ProductPage(this.product);
 
   Widget _buildAddressPriceRow(double price) {
     return Row(
@@ -36,31 +34,7 @@ class ProductPage extends StatelessWidget {
     );
   }
 
-  // _showWarning(BuildContext context) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: Text("Are you sure?"),
-  //           content: Text("This cannot be undone."),
-  //           actions: <Widget>[
-  //             FlatButton(
-  //               child: Text("Cancel"),
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //               },
-  //             ),
-  //             FlatButton(
-  //               child: Text("Delete"),
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.pop(context, true);
-  //               },
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -69,29 +43,29 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-          Product product = model.allProducts[index];
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(product.title),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(product.title),
+        ),
+        body: Column(
+          children: <Widget>[
+            FadeInImage(
+              image: NetworkImage(product.image),
+              height: 300.0,
+              fit: BoxFit.cover,
+              placeholder: AssetImage('assets/food.jpg'),
             ),
-            body: Column(
-              children: <Widget>[
-                Image.network(product.image),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: TitleDefault(product.title),
-                ),
-                _buildAddressPriceRow(product.price),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(product.description),
-                ),
-              ],
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: TitleDefault(product.title),
             ),
-          );
-        },
+            _buildAddressPriceRow(product.price),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(product.description),
+            ),
+          ],
+        ),
       ),
     );
   }

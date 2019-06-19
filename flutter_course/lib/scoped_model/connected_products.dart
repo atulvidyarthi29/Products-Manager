@@ -7,41 +7,8 @@ import 'package:scoped_model/scoped_model.dart';
 class ConnectProductsModel extends Model {
   List<Product> _products = [];
   User _authenticatedUser;
-  int _selProductIndex;
+  String _selProductId;
   bool _isLoading = false;
-
-  Future<Null> addProduct(
-      String title, String description, double price, String image) {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> productData = {
-      'title': title,
-      'description': description,
-      'image':
-          'https://draxe.com/wp-content/uploads/2016/12/Benefits-of-Dark-Chocolate_HEADER.jpg',
-      'price': price,
-      'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id,
-    };
-    return http
-        .post("https://flutter-course-3c7a4.firebaseio.com/products.json",
-            body: json.encode(productData))
-        .then((http.Response response) {
-      final Map<String, dynamic> resData = json.decode(response.body);
-      final Product newProduct = Product(
-          id: resData['name'],
-          title: title,
-          description: description,
-          image:
-              'https://draxe.com/wp-content/uploads/2016/12/Benefits-of-Dark-Chocolate_HEADER.jpg',
-          price: price,
-          userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
-      _products.add(newProduct);
-      _isLoading = false;
-      notifyListeners();
-    });
-  }
 }
 
 class ProductModel extends ConnectProductsModel {
@@ -58,8 +25,8 @@ class ProductModel extends ConnectProductsModel {
     return List.from(_products);
   }
 
-  int get selectedProductIndex {
-    return _selProductIndex;
+  String get selectedProductId {
+    return _selProductId;
   }
 
   bool get displayFavMode {
@@ -67,18 +34,69 @@ class ProductModel extends ConnectProductsModel {
   }
 
   Product get selectedProduct {
-    if (selectedProductIndex == null) {
+    if (selectedProductId == null) {
       return null;
     }
-    return _products[selectedProductIndex];
+    return _products.firstWhere((Product product) {
+      return product.id == _selProductId;
+    });
   }
 
-  void fetchProduct() {
+  int get selectedProductIndex {
+    return _products.indexWhere((Product product) {
+      return product.id == _selProductId;
+    });
+  }
+
+  Future<bool> addProduct(
+      String title, String description, double price, String image) {
     _isLoading = true;
     notifyListeners();
-    http
-        .get('https://flutter-course-3c7a4.firebaseio.com/products.json')
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'description': description,
+      'image':
+          'https://draxe.com/wp-content/uploads/2016/12/Benefits-of-Dark-Chocolate_HEADER.jpg',
+      'price': price,
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id,
+    };
+    return http
+        .post("https://flutter-course-3c7a4.firebaseio.com/products.json",
+            body: json.encode(productData))
         .then((http.Response response) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+      final Map<String, dynamic> resData = json.decode(response.body);
+      final Product newProduct = Product(
+          id: resData['name'],
+          title: title,
+          description: description,
+          image:
+              'https://draxe.com/wp-content/uploads/2016/12/Benefits-of-Dark-Chocolate_HEADER.jpg',
+          price: price,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products.add(newProduct);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    });
+  }
+
+  Future<Null> fetchProduct() {
+    _isLoading = true;
+    notifyListeners();
+    return http
+        .get('https://flutter-course-3c7a4.firebaseio.com/products.json')
+        .then<Null>((http.Response response) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       List<Product> productList = [];
       if (responseData == null) {
@@ -100,27 +118,37 @@ class ProductModel extends ConnectProductsModel {
       _products = productList;
       _isLoading = false;
       notifyListeners();
+      // _selProductId = null;
+      return;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return;
     });
   }
 
-  void deleteProduct() {
+  Future<bool> deleteProduct() {
     _isLoading = true;
     final String deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
-    _selProductIndex = null;
+    _selProductId = null;
     notifyListeners();
-    http
+    return http
         .delete(
             'https://flutter-course-3c7a4.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {
       _isLoading = true;
-
       notifyListeners();
+      return true;
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
   }
 
-  Future<Null> updateProduct(
-      String title, String description, double price, String image) {
+  Future<bool> updateProduct(
+      String title, String description, double price, String image) async {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> updatedProduct = {
@@ -131,12 +159,16 @@ class ProductModel extends ConnectProductsModel {
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId
     };
-
-    return http
-        .put(
-            'https://flutter-course-3c7a4.firebaseio.com/products/${selectedProduct.id}.json',
-            body: json.encode(updatedProduct))
-        .then((http.Response response) {
+    try {
+      final http.Response response = await http.put(
+          'https://flutter-course-3c7a4.firebaseio.com/products/${selectedProduct.id}.json',
+          body: json.encode(updatedProduct));
+      // .then((http.Response response) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
       final Product updProduct = Product(
           id: selectedProduct.id,
           title: title,
@@ -148,7 +180,12 @@ class ProductModel extends ConnectProductsModel {
       _products[selectedProductIndex] = updProduct;
       _isLoading = false;
       notifyListeners();
-    });
+      return true;
+    } catch (error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   void toggleFavoriteStatus() {
@@ -167,8 +204,8 @@ class ProductModel extends ConnectProductsModel {
     notifyListeners();
   }
 
-  void selectProduct(int index) {
-    _selProductIndex = index;
+  void selectProduct(String productId) {
+    _selProductId = productId;
     notifyListeners();
   }
 

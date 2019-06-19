@@ -15,9 +15,28 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpg',
+    'image':
+        'https://draxe.com/wp-content/uploads/2016/12/Benefits-of-Dark-Chocolate_HEADER.jpg',
   };
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  _showWarning(BuildContext context, String error) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(error),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Try again"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   void _submitform(
       Function addProduct, Function updateProduct, Function selectProduct,
@@ -25,15 +44,19 @@ class _ProductEditPageState extends State<ProductEditPage> {
     if (!_formkey.currentState.validate()) return;
     _formkey.currentState.save();
 
-    if (selectedProductIndex == null)
+    if (selectedProductIndex == -1)
       addProduct(
         _formdata['title'],
         _formdata['description'],
         _formdata['price'],
         _formdata['image'],
-      ).then((_) {
-        Navigator.pushReplacementNamed(context, '/products')
-            .then((_) => selectProduct(null));
+      ).then((bool success) {
+        if (success) {
+          Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => selectProduct(null));
+        } else {
+          _showWarning(context, "Something went wrong");
+        }
       });
     else {
       updateProduct(
@@ -41,9 +64,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
         _formdata['description'],
         _formdata['price'],
         _formdata['image'],
-      ).then((_) {
-        Navigator.pushReplacementNamed(context, '/products')
-            .then((_) => selectProduct(null));
+      ).then((bool success) {
+        if (success) {
+          Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => selectProduct(null));
+        } else {
+          _showWarning(context, "Something went wrong");
+        }
       });
     }
   }
@@ -149,7 +176,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         Widget productContent =
             _buildProductContent(context, model.selectedProduct);
-        return model.selectedProductIndex == null
+        return model.selectedProductIndex == -1
             ? productContent
             : Scaffold(
                 appBar: AppBar(

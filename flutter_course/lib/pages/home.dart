@@ -17,7 +17,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    widget.model.fetchProduct();
+    widget.model.fetchProduct().then((_) {
+      widget.model.selectProduct(null);
+    });
     super.initState();
   }
 
@@ -32,7 +34,10 @@ class _HomePageState extends State<HomePage> {
         } else if (model.isLoading) {
           content = Center(child: CircularProgressIndicator());
         }
-        return content;
+        return RefreshIndicator(
+          onRefresh: model.fetchProduct,
+          child: content,
+        );
       },
     );
   }

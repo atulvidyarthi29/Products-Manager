@@ -27,31 +27,32 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildButtonBar(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          onPressed: () => Navigator.pushNamed<bool>(
-                context,
-                "/products/" + index.toString(),
-              ),
-          color: Theme.of(context).primaryColor,
-          icon: Icon(Icons.info),
-        ),
-        ScopedModelDescendant<MainModel>(
-            builder: (BuildContext context, Widget child, MainModel model) {
-          return IconButton(
-            onPressed: () {
-              model.selectProduct(index);
-              model.toggleFavoriteStatus();
-            },
-            icon: model.allProducts[index].isFavorite
-                ? Icon(Icons.favorite)
-                : Icon(Icons.favorite_border),
-            color: Colors.red,
-          );
-        }),
-      ],
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+              onPressed: () => Navigator.pushNamed<bool>(
+                    context,
+                    "/products/" + model.allProducts[index].id,
+                  ),
+              color: Theme.of(context).primaryColor,
+              icon: Icon(Icons.info),
+            ),
+            IconButton(
+              onPressed: () {
+                model.selectProduct(model.allProducts[index].id);
+                model.toggleFavoriteStatus();
+              },
+              icon: model.allProducts[index].isFavorite
+                  ? Icon(Icons.favorite)
+                  : Icon(Icons.favorite_border),
+              color: Colors.red,
+            )
+          ],
+        );
+      },
     );
   }
 
@@ -60,7 +61,12 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+            image: NetworkImage(product.image),
+            height: 300.0,
+            fit: BoxFit.cover,
+            placeholder: AssetImage('assets/food.jpg'),
+          ),
           _buildTitlePrice(),
           AddressTag("Union Square, San Francisco"),
           Text(product.userEmail),

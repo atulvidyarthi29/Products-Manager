@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/models/product.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:flutter_course/pages/auth.dart';
 import 'package:flutter_course/pages/home.dart';
@@ -43,10 +44,13 @@ class _MyAppState extends State<MyApp> {
             return null;
           }
           if (path[1] == 'products') {
-            final int index = int.parse(path[2]);
+            final String productId = path[2];
+            Product product = model.allProducts.firstWhere((Product pdt){
+                return pdt.id == productId;
+            }); 
             return MaterialPageRoute<bool>(
                 builder: (BuildContext context) =>
-                    ProductPage(index));
+                    ProductPage(product));
           }
           return null;
         },
