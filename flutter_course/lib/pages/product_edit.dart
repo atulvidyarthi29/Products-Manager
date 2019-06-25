@@ -52,7 +52,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         _formdata['image'],
       ).then((bool success) {
         if (success) {
-          Navigator.pushReplacementNamed(context, '/products')
+          Navigator.pushReplacementNamed(context, '/')
               .then((_) => selectProduct(null));
         } else {
           _showWarning(context, "Something went wrong");
@@ -66,7 +66,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         _formdata['image'],
       ).then((bool success) {
         if (success) {
-          Navigator.pushReplacementNamed(context, '/products')
+          Navigator.pushReplacementNamed(context, '/')
               .then((_) => selectProduct(null));
         } else {
           _showWarning(context, "Something went wrong");

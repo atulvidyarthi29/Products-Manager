@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_course/scoped_model/main.dart';
 import 'package:flutter_course/widgets/products/products.dart';
+import 'package:flutter_course/widgets/ui_elements/logout_tile.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,7 +57,8 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.pushReplacementNamed(context, '/admin');
             },
-          )
+          ),
+          LogoutTile(),
         ],
       ),
     );
